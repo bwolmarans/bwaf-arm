@@ -12,7 +12,7 @@
         "adminUsername": {
             "type": "string",
             "metadata": {
-                "description": "Username for the Virtual Machine."
+                "description": "Ignored, will always be Admin. Username for the Virtual Machine."
             }
         },
         "authenticationType": {
