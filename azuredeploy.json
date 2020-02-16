@@ -6,37 +6,7 @@
             "type": "string",
             "defaultValue": "bwaf-from-arm",
             "metadata": {
-                "description": "The name of you Virtual Machine."
-            }
-        },
-        "adminUsername": {
-            "type": "string",
-            "metadata": {
-                "description": "Ignored, will always be Admin. Username for the Virtual Machine."
-            }
-        },
-        "authenticationType": {
-            "type": "string",
-            "defaultValue": "sshPublicKey",
-            "allowedValues": [
-                "sshPublicKey",
-                "password"
-            ],
-            "metadata": {
-                "description": "Type of authentication to use on the Virtual Machine. SSH key is recommended."
-            }
-        },
-        "adminPasswordOrKey": {
-            "type": "securestring",
-            "metadata": {
-                "description": "SSH Key or password for the Virtual Machine. SSH key is recommended."
-            }
-        },
-        "dnsLabelPrefix": {
-            "type": "string",
-            "defaultValue": "[toLower(concat('simplelinuxvm-', uniqueString(resourceGroup().id)))]",
-            "metadata": {
-                "description": "Unique DNS Name for the Public IP used to access the Virtual Machine."
+                "description": "The name of your Virtual Machine."
             }
         },
         "location": {
@@ -46,16 +16,9 @@
                 "description": "Location for all resources."
             }
         },
-        "VmSize": {
-            "type": "string",
-            "defaultValue": "Standard_DS1_v2",
-            "metadata": {
-                "description": "The size of the VM"
-            }
-        },
         "virtualNetworkName": {
             "type": "string",
-            "defaultValue": "vNet",
+            "defaultValue": "vNet-bwaf",
             "metadata": {
                 "description": "Name of the VNET"
             }
@@ -82,17 +45,6 @@
         "osDiskType": "Standard_LRS",
         "subnetAddressPrefix": "10.1.0.0/24",
         "addressPrefix": "10.1.0.0/16",
-        "linuxConfiguration": {
-            "disablePasswordAuthentication": true,
-            "ssh": {
-                "publicKeys": [
-                    {
-                        "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
-                        "keyData": "[parameters('adminPasswordOrKey')]"
-                    }
-                ]
-            }
-        }
     },
     "resources": [
         {
@@ -199,13 +151,13 @@
             ],
             "properties": {
                 "hardwareProfile": {
-                    "vmSize": "[parameters('VmSize')]"
+                    "vmSize": "Standard_DS1_v2"
                 },
                 "storageProfile": {
                     "osDisk": {
                         "createOption": "fromImage",
                         "managedDisk": {
-                            "storageAccountType": "[variables('osDiskType')]"
+                            "storageAccountType": "Standard_LRS"
                         }
                     },
                     "imageReference": {
@@ -224,10 +176,9 @@
                 },
                 "osProfile": {
                     "computerName": "[parameters('vmName')]",
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPasswordOrKey')]",
-                    "linuxConfiguration": "[if(equals(parameters('authenticationType'), 'password'), json('null'), variables('linuxConfiguration'))]",
-			        "custom_data": ["signature: WaaS_Support", "email: WaaS_Support@barracuda.com", "organization: Barracuda Networks, Inc."]
+                    "adminUsername": "admin",
+                    "adminPassword": "Hello123456!",
+                    "custom_data": ["signature: WaaS_Support", "email: WaaS_Support@barracuda.com", "organization: Barracuda Networks, Inc."]
                 }
             }
         }
